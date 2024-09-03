@@ -5,7 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 
 
-namespace BarebonesApi.StartupConfig;
+namespace UnhingedApi.StartupConfig;
 
 public static class DependencyInjectionExtensions
 {
@@ -116,12 +116,12 @@ public static class DependencyInjectionExtensions
             opts.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
                                             new HeaderApiVersionReader("x-api-version"),
                                             new MediaTypeApiVersionReader("x-api-version"));
-        }); 
+        });
 
         apiVersioningBuilder.AddApiExplorer(opts =>
         {
             opts.GroupNameFormat = "'v'VVV";
             opts.SubstituteApiVersionInUrl = true;
-        }); 
+        });
     }
 };

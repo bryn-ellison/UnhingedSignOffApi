@@ -1,7 +1,7 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BarebonesApi.Controllers.v1
+namespace UnhingedApi.Controllers.v1
 {
     [Route("api/[controller]")]
     [ApiController]

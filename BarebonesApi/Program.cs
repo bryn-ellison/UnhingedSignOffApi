@@ -1,6 +1,6 @@
-using BarebonesApi.StartupConfig;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using UnhingedApi.StartupConfig;
 
 var builder = WebApplication.CreateBuilder(args);
 
