@@ -48,8 +48,8 @@ public static class DependencyInjectionExtensions
             opts.AddSecurityDefinition("bearerAuth", securityScheme);
             opts.AddSecurityRequirement(securityRequirement);
 
-            var title = "Barebones Versioned API";
-            var description = "This is a barebones api template that includes versioning, authentication, monitoring, healthchecks and rate limiting";
+            var title = "Unhinged Email Sign Off API";
+            var description = "This API supports the Unhinged Email Sign Offs web app at www.insertfinalurlhere.com";
             var terms = new Uri("https://localhost:7000/terms");
             var contact = new OpenApiContact()
             {
