@@ -5,6 +5,7 @@ using UnhingedApi.StartupConfig;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddStandardServices();
+builder.AddCustomServices();
 builder.AddAuthenticationServices();
 builder.AddAuthorizationServices();
 builder.AddHealthCheckServices();

@@ -1,5 +1,8 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UnhingedLibrary.DataAccess;
+using UnhingedLibrary.Models;
 
 namespace UnhingedApi.Controllers.v1;
 
@@ -8,19 +11,27 @@ namespace UnhingedApi.Controllers.v1;
 [ApiVersion("1.0")]
 public class SignOffsController : ControllerBase
 {
+    private readonly ISignOffData _data;
+
+    public SignOffsController(ISignOffData data)
+    {
+        _data = data;
+    }
+
     // GET: api/SignOffs/All
     [HttpGet]
-    [Route("api/[controller]/all")]
-    public IActionResult GetAllApprovedSignOffs()
+    [Route("all")]
+    [AllowAnonymous]
+    public async Task<ActionResult<List<SignOffModel>>> GetAllApprovedSignOffs()
     {
         try
         {
-            return Ok();
+            List<SignOffModel> output = await _data.LoadAllApprovedSignOffs();
+            return Ok(output);
         }
         catch (Exception ex)
         {
-
-            throw;
+            return BadRequest(ex.Message);
         }
     }
 

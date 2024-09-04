@@ -6,7 +6,7 @@ namespace UnhingedLibrary.DataAccess;
 public class SignOffData : ISignOffData
 {
     private readonly ISqliteDataAccess _db;
-    private readonly string connectionString = "Default";
+    private readonly string connectionStringName = "Default";
     public SignOffData(ISqliteDataAccess db)
     {
         _db = db;
@@ -16,37 +16,39 @@ public class SignOffData : ISignOffData
     {
         string sqlQuery = "select * from SignOffs where Approved = 1 and Deleted = 0;";
 
-        return _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionString);
+        var returnedData = _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionStringName);
+
+        return returnedData;
     }
 
     public Task<List<SignOffModel>> LoadAllSignOffsToBeApproved()
     {
         string sqlQuery = "select * from SignOffs where Approved = 0 and Deleted = 0;";
 
-        return _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionString);
+        return _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionStringName);
     }
     public Task<List<SignOffModel>> LoadAllSignDeletedSignOffs()
     {
         string sqlQuery = "select * from SignOffs where Approved = 0 and Deleted = 0;";
 
-        return _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionString);
+        return _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionStringName);
     }
     public Task<List<SignOffModel>> LoadRandomSignOff()
     {
         string sqlQuery = "select * from SignOffs where Approved = 1 and Deleted = 0 ORDER BY RANDOM() LIMIT 1;";
 
-        return _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionString);
+        return _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionStringName);
     }
     public Task CreateSignOff(string signOff, string author)
     {
         string sqlQuery = @"insert into SignOffs(SignOff, Author) values (@signOff, @author);";
 
-        return _db.SaveData<dynamic>(sqlQuery, new { SignOff = signOff, Author = author }, connectionString);
+        return _db.SaveData<dynamic>(sqlQuery, new { SignOff = signOff, Author = author }, connectionStringName);
     }
     public Task ApproveSignOff(int id)
     {
         string sqlQuery = @"update SignOffs set Approved = 1 where Id = @id;";
 
-        return _db.SaveData<dynamic>(sqlQuery, new { Id = id }, connectionString);
+        return _db.SaveData<dynamic>(sqlQuery, new { Id = id }, connectionStringName);
     }
 }
