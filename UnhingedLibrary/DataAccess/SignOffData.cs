@@ -3,7 +3,7 @@ using UnhingedLibrary.Models;
 
 namespace UnhingedLibrary.DataAccess;
 
-public class SignOffData
+public class SignOffData : ISignOffData
 {
     private readonly ISqliteDataAccess _db;
     private readonly string connectionString = "Default";
@@ -12,26 +12,26 @@ public class SignOffData
         _db = db;
     }
 
-    public Task<List<SignOffModel>> GetAllApprovedSignOffs()
+    public Task<List<SignOffModel>> LoadAllApprovedSignOffs()
     {
         string sqlQuery = "select * from SignOffs where Approved = 1 and Deleted = 0;";
 
         return _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionString);
     }
 
-    public Task<List<SignOffModel>> GetAllSignOffsToBeApproved()
+    public Task<List<SignOffModel>> LoadAllSignOffsToBeApproved()
     {
         string sqlQuery = "select * from SignOffs where Approved = 0 and Deleted = 0;";
 
         return _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionString);
     }
-    public Task<List<SignOffModel>> GetAllSignDeletedSignOffs()
+    public Task<List<SignOffModel>> LoadAllSignDeletedSignOffs()
     {
         string sqlQuery = "select * from SignOffs where Approved = 0 and Deleted = 0;";
 
         return _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionString);
     }
-    public Task<List<SignOffModel>> GetRandomSignOff()
+    public Task<List<SignOffModel>> LoadRandomSignOff()
     {
         string sqlQuery = "select * from SignOffs where Approved = 1 and Deleted = 0 ORDER BY RANDOM() LIMIT 1;";
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using UnhingedLibrary.DataAccess;
 
 
 namespace UnhingedApi.StartupConfig;
@@ -14,6 +15,12 @@ public static class DependencyInjectionExtensions
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.AddSwaggerServices();
+    }
+
+    public static void AddCustomServices(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddSingleton<ISqliteDataAccess, SqliteDataAccess>();
+        builder.Services.AddSingleton<ISignOffData, SignOffData>();
     }
 
     private static void AddSwaggerServices(this WebApplicationBuilder builder)
