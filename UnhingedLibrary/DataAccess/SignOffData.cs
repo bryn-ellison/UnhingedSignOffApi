@@ -29,7 +29,7 @@ public class SignOffData : ISignOffData
     }
     public Task<List<SignOffModel>> LoadAllSignDeletedSignOffs()
     {
-        string sqlQuery = "select * from SignOffs where Approved = 0 and Deleted = 0;";
+        string sqlQuery = "select * from SignOffs where Deleted = 1;";
 
         return _db.LoadData<SignOffModel, dynamic>(sqlQuery, "", connectionStringName);
     }
@@ -41,13 +41,25 @@ public class SignOffData : ISignOffData
     }
     public Task CreateSignOff(string signOff, string author)
     {
-        string sqlQuery = @"insert into SignOffs(SignOff, Author) values (@signOff, @author);";
+        string sqlQuery = @"insert into SignOffs (SignOff, Author) values (@SignOff, @Author);";
 
         return _db.SaveData<dynamic>(sqlQuery, new { SignOff = signOff, Author = author }, connectionStringName);
     }
     public Task ApproveSignOff(int id)
     {
-        string sqlQuery = @"update SignOffs set Approved = 1 where Id = @id;";
+        string sqlQuery = @"update SignOffs set Approved = 1 where Id = @Id;";
+
+        return _db.SaveData<dynamic>(sqlQuery, new { Id = id }, connectionStringName);
+    }
+    public Task AmendSignOff(string signOff, string author, int id)
+    {
+        string sqlQuery = @"update SignOffs set SignOff = @SignOff, Author = @Author where Id = @Id;";
+
+        return _db.SaveData<dynamic>(sqlQuery, new { SignOff = signOff, Author = author, Id = id }, connectionStringName);
+    }
+    public Task DeleteSignOff(int id)
+    {
+        string sqlQuery = @"update SignOffs set Deleted = 1 where Id = @Id;";
 
         return _db.SaveData<dynamic>(sqlQuery, new { Id = id }, connectionStringName);
     }

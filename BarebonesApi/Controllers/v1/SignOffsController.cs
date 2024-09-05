@@ -1,8 +1,10 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UnhingedApi.Models;
 using UnhingedLibrary.DataAccess;
 using UnhingedLibrary.Models;
+using YamlDotNet.Core.Tokens;
 
 namespace UnhingedApi.Controllers.v1;
 
@@ -20,7 +22,7 @@ public class SignOffsController : ControllerBase
 
     // GET: api/SignOffs/All
     [HttpGet]
-    [Route("all")]
+    [Route("All")]
     [AllowAnonymous]
     public async Task<ActionResult<List<SignOffModel>>> GetAllApprovedSignOffs()
     {
@@ -35,28 +37,134 @@ public class SignOffsController : ControllerBase
         }
     }
 
-    // GET api/<SignOffsController>/5
-    [HttpGet("{id}")]
-    public string Get(int id)
+    // GET: api/SignOffs/ToApprove
+    [HttpGet]
+    [Route("ToApprove")]
+    [AllowAnonymous]
+    public async Task<ActionResult<List<SignOffModel>>> GetSignOffsToApprove()
     {
-        return "value";
+        try
+        {
+            List<SignOffModel> output = await _data.LoadAllSignOffsToBeApproved();
+            return Ok(output);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
-    // POST api/<SignOffsController>
+    // GET: api/SignOffs/Deleted
+    [HttpGet]
+    [Route("Deleted")]
+    [AllowAnonymous]
+    public async Task<ActionResult<List<SignOffModel>>> GetDeletedSignOffs()
+    {
+        try
+        {
+            List<SignOffModel> output = await _data.LoadAllSignDeletedSignOffs();
+            return Ok(output);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    // GET: api/SignOffs
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<ActionResult<List<SignOffModel>>> GetRandomSignOff()
+    {
+        try
+        {
+            List<SignOffModel> output = await _data.LoadRandomSignOff();
+            return Ok(output);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    // POST: api/SignOffs
     [HttpPost]
-    public void Post([FromBody] string value)
+    [AllowAnonymous]
+    public async Task<IActionResult> PostSignOff([FromBody] VerifySignOffModel signOff)
     {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                await _data.CreateSignOff(signOff.SignOff, signOff.Author);
+                return Ok("New Uninged sign off added successfully, please wait for admin approval :)");
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
-    // PUT api/<SignOffsController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    // PATCH: api/SignOffs/{Id}/Approve
+    [HttpPatch]
+    [Route("{id}/Approve")]
+    [AllowAnonymous]
+    public async Task<IActionResult> PatchApproveSignOff(int id)
     {
+        try
+        {
+            await _data.ApproveSignOff(id);
+            return Ok("Sign Off approved successfully!");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
-    // DELETE api/<SignOffsController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
+    // PATCH: api/SignOffs/{Id}
+    [HttpPatch]
+    [Route("{id}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> EditSignOff([FromBody] VerifySignOffModel signOff, int id)
     {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                await _data.AmendSignOff(signOff.SignOff, signOff.Author, id);
+                return Ok("Sign Off edit successful!");
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    // DELETE api/SignOffs/{Id}
+    [HttpDelete]
+    [Route("{id}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> DeleteSignOffById(int id)
+    {
+        try
+        {
+            await _data.DeleteSignOff(id);
+            return Ok("Sign Off deleted successfully!");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
