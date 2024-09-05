@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using UnhingedApi.Models;
 using UnhingedLibrary.DataAccess;
 using UnhingedLibrary.Models;
@@ -23,7 +24,6 @@ public class SignOffsController : ControllerBase
     // GET: api/SignOffs/All
     [HttpGet]
     [Route("All")]
-    [AllowAnonymous]
     public async Task<ActionResult<List<SignOffModel>>> GetAllApprovedSignOffs()
     {
         try
@@ -40,7 +40,6 @@ public class SignOffsController : ControllerBase
     // GET: api/SignOffs/ToApprove
     [HttpGet]
     [Route("ToApprove")]
-    [AllowAnonymous]
     public async Task<ActionResult<List<SignOffModel>>> GetSignOffsToApprove()
     {
         try
@@ -57,7 +56,6 @@ public class SignOffsController : ControllerBase
     // GET: api/SignOffs/Deleted
     [HttpGet]
     [Route("Deleted")]
-    [AllowAnonymous]
     public async Task<ActionResult<List<SignOffModel>>> GetDeletedSignOffs()
     {
         try
@@ -113,7 +111,6 @@ public class SignOffsController : ControllerBase
     // PATCH: api/SignOffs/{Id}/Approve
     [HttpPatch]
     [Route("{id}/Approve")]
-    [AllowAnonymous]
     public async Task<IActionResult> PatchApproveSignOff(int id)
     {
         try
@@ -130,7 +127,6 @@ public class SignOffsController : ControllerBase
     // PATCH: api/SignOffs/{Id}
     [HttpPatch]
     [Route("{id}")]
-    [AllowAnonymous]
     public async Task<IActionResult> EditSignOff([FromBody] VerifySignOffModel signOff, int id)
     {
         try
@@ -154,7 +150,6 @@ public class SignOffsController : ControllerBase
     // DELETE api/SignOffs/{Id}
     [HttpDelete]
     [Route("{id}")]
-    [AllowAnonymous]
     public async Task<IActionResult> DeleteSignOffById(int id)
     {
         try

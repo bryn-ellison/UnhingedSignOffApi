@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using UnhingedApi.StartupConfig;
@@ -10,6 +11,7 @@ builder.AddAuthenticationServices();
 builder.AddAuthorizationServices();
 builder.AddHealthCheckServices();
 builder.AddVersioningServices();
+builder.AddRateLimitServices();
 
 var app = builder.Build();
 
@@ -25,6 +27,8 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.UseResponseCaching();
+
 app.MapControllers();
 
 app.MapHealthChecks("/health", new HealthCheckOptions
@@ -33,5 +37,7 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 }).AllowAnonymous();
 
 app.MapHealthChecksUI().AllowAnonymous();
+
+app.UseIpRateLimiting();
 
 app.Run();

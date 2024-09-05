@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -15,6 +16,8 @@ public static class DependencyInjectionExtensions
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.AddSwaggerServices();
+        builder.Services.AddResponseCaching();
+        builder.Services.AddMemoryCache();
     }
 
     public static void AddCustomServices(this WebApplicationBuilder builder)
@@ -130,5 +133,15 @@ public static class DependencyInjectionExtensions
             opts.GroupNameFormat = "'v'VVV";
             opts.SubstituteApiVersionInUrl = true;
         });
+    }
+    public static void AddRateLimitServices(this WebApplicationBuilder builder)
+    {
+        // settings for rate limiting in appsettings.json
+        builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+        builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+        builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+        builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+        builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+        builder.Services.AddInMemoryRateLimiting();
     }
 };
