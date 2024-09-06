@@ -1,8 +1,10 @@
 ﻿using Asp.Versioning;
 using AspNetCoreRateLimit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using System.Text;
 using UnhingedLibrary.DataAccess;
 
@@ -60,11 +62,9 @@ public static class DependencyInjectionExtensions
 
             var title = "Unhinged Email Sign Off API";
             var description = "This API supports the Unhinged Email Sign Offs web app at www.insertfinalurlhere.com";
-            var terms = new Uri("https://localhost:7000/terms");
             var contact = new OpenApiContact()
             {
                 Name = "Bryn Ellison",
-                Email = "help@brynellison.com",
                 Url = new Uri("https://github.com/bryn-ellison/")
             };
 
@@ -73,7 +73,6 @@ public static class DependencyInjectionExtensions
                 Version = "v1",
                 Title = $"{title} v1",
                 Description = description,
-                TermsOfService = terms,
                 Contact = contact
             });
         });
@@ -81,16 +80,11 @@ public static class DependencyInjectionExtensions
 
     public static void AddAuthorizationServices(this WebApplicationBuilder builder)
     {
-        builder.Services.AddAuthorization(opts =>
-        {
-            opts.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-        });
     }
 
     public static void AddHealthCheckServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddHealthChecks();
-        // SQL server required before activation, to append above - .AddSqlServer(builder.Configuration.GetConnectionString("Default"))
 
         builder.Services.AddHealthChecksUI(opts =>
         {
@@ -102,16 +96,15 @@ public static class DependencyInjectionExtensions
 
     public static void AddAuthenticationServices(this WebApplicationBuilder builder)
     {
-        builder.Services.AddAuthentication("Bearer").AddJwtBearer(opts =>
+        var domain = $"https://{builder.Configuration["Auth0:Domain"]}/";
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
         {
-            opts.TokenValidationParameters = new()
+            options.Authority = domain;
+            options.Audience = builder.Configuration["Auth0:Audience"];
+            options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = builder.Configuration.GetValue<string>("Authentication:Issuer"),
-                ValidAudience = builder.Configuration.GetValue<string>("Authentication:Audience"),
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("Authentication:SecretKey")))
+                NameClaimType = ClaimTypes.NameIdentifier
             };
         });
     }
@@ -136,7 +129,6 @@ public static class DependencyInjectionExtensions
     }
     public static void AddRateLimitServices(this WebApplicationBuilder builder)
     {
-        // settings for rate limiting in appsettings.json
         builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
         builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
         builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();

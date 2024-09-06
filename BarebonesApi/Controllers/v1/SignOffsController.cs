@@ -23,6 +23,7 @@ public class SignOffsController : ControllerBase
 
     // GET: api/SignOffs/All
     [HttpGet]
+    [Authorize]
     [Route("All")]
     public async Task<ActionResult<List<SignOffModel>>> GetAllApprovedSignOffs()
     {
@@ -39,6 +40,7 @@ public class SignOffsController : ControllerBase
 
     // GET: api/SignOffs/ToApprove
     [HttpGet]
+    [Authorize]
     [Route("ToApprove")]
     public async Task<ActionResult<List<SignOffModel>>> GetSignOffsToApprove()
     {
@@ -55,6 +57,7 @@ public class SignOffsController : ControllerBase
 
     // GET: api/SignOffs/Deleted
     [HttpGet]
+    [Authorize]
     [Route("Deleted")]
     public async Task<ActionResult<List<SignOffModel>>> GetDeletedSignOffs()
     {
@@ -71,7 +74,6 @@ public class SignOffsController : ControllerBase
 
     // GET: api/SignOffs
     [HttpGet]
-    [AllowAnonymous]
     public async Task<ActionResult<List<SignOffModel>>> GetRandomSignOff()
     {
         try
@@ -87,7 +89,6 @@ public class SignOffsController : ControllerBase
 
     // POST: api/SignOffs
     [HttpPost]
-    [AllowAnonymous]
     public async Task<IActionResult> PostSignOff([FromBody] VerifySignOffModel signOff)
     {
         try
@@ -110,6 +111,7 @@ public class SignOffsController : ControllerBase
 
     // PATCH: api/SignOffs/{Id}/Approve
     [HttpPatch]
+    [Authorize]
     [Route("{id}/Approve")]
     public async Task<IActionResult> PatchApproveSignOff(int id)
     {
@@ -126,6 +128,7 @@ public class SignOffsController : ControllerBase
 
     // PATCH: api/SignOffs/{Id}
     [HttpPatch]
+    [Authorize]
     [Route("{id}")]
     public async Task<IActionResult> EditSignOff([FromBody] VerifySignOffModel signOff, int id)
     {
@@ -149,6 +152,7 @@ public class SignOffsController : ControllerBase
 
     // DELETE api/SignOffs/{Id}
     [HttpDelete]
+    [Authorize]
     [Route("{id}")]
     public async Task<IActionResult> DeleteSignOffById(int id)
     {
